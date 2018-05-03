@@ -2,23 +2,31 @@ version: "2"
 services:
 
   django:
+    restart: always
+    image: django_app
     container_name: django
-    hostname: django
     build:
       context: ./
       dockerfile: docker/prod/django/Dockerfile
-    ports:
-      - "8001:8000"
-    volumes:
-      - .:/code
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: django
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: ecs-django
 
   nginx:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "8000:80"
-    volumes:
-      - ./:/code
-      - ./docker/prod/nginx:/etc/nginx/conf.d
+      - "80:80"
     depends_on:
       - django
+    volumes:
+      - ./docker/prod/nginx:/etc/nginx/conf.d
+    logging:
+      driver: awslogs
+      options: 
+        awslogs-group: django
+        awslogs-region: us-east-1
+        awslogs-stream-prefix: ecs-nginx

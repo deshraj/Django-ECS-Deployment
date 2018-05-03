@@ -4,6 +4,9 @@
 
 This repository describes how to deploy a django based web application to ECS.
 
+## How to setup
+
+
 ## TODOs
 
  - [ ] Add support for separate celery worker

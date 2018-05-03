@@ -1,0 +1,72 @@
+{
+   "containerDefinitions": [ 
+      {
+         "essential": true,
+         "image": "nginx:latest",
+         "logConfiguration": { 
+            "logDriver": "awslogs",
+            "options": { 
+               "awslogs-group" : "/ecs/fargate-task-definition",
+               "awslogs-region": "us-east-1",
+               "awslogs-stream-prefix": "ecs"
+            }
+         },
+         "name": "nginx-fargate-app",
+         "portMappings": [ 
+            { 
+               "containerPort": 80,
+               "hostPort": 80,
+               "protocol": "tcp"
+            }
+         ],
+         "mountPoints": [ 
+            { 
+               "containerPath": "/code",
+               "sourceVolume": "django-app-volume"
+            }
+         ]
+      },
+      {
+         "entryPoint": [
+            "docker/prod/django/docker-entrypoint.sh"
+         ],
+         "essential": true,
+         "image": "django-app:latest",
+         "logConfiguration": { 
+            "logDriver": "awslogs",
+            "options": { 
+               "awslogs-group" : "/ecs/fargate-task-definition",
+               "awslogs-region": "us-east-1",
+               "awslogs-stream-prefix": "ecs"
+            }
+         },
+         "name": "django-fargate-app",
+         "portMappings": [ 
+            { 
+               "containerPort": 8000,
+               "hostPort": 8000,
+               "protocol": "tcp"
+            }
+         ],
+         "mountPoints": [ 
+            { 
+               "containerPath": "/code",
+               "sourceVolume": "django-app-volume"
+            }
+         ]
+      }
+   ],
+   "cpu": "256",
+   "executionRoleArn": "arn:aws:iam::012345678910:role/ecsTaskExecutionRole",
+   "family": "fargate-task-definition",
+   "memory": "512",
+   "networkMode": "awsvpc",
+   "requiresCompatibilities": [ 
+       "FARGATE" 
+    ],
+   "volumes": [ 
+      { 
+         "name": "django-app-volume"
+      }
+   ]
+}
