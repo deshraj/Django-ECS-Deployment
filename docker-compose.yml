@@ -1,0 +1,24 @@
+version: "2"
+services:
+
+  django:
+    container_name: django
+    hostname: django
+    build:
+      context: ./
+      dockerfile: docker/prod/django/Dockerfile
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/code
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/code
+      - ./docker/prod/nginx:/etc/nginx/conf.d
+    depends_on:
+      - django
